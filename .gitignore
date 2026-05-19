@@ -1,0 +1,12 @@
+# Pastas geradas pelo Maven
+target/
+**/target/
+
+# Arquivos do VS Code e Eclipse
+.vscode/
+.classpath
+.project
+.settings/
+*.log
+
+requisitos.md
