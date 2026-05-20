@@ -33,8 +33,8 @@
 
 ## 5. Extension Patterns (Nota: 3,0)
 *Mecanismos para adicionar comportamentos extras sem mexer no núcleo.*
-- [ ] **Invocation Interceptor:** (Ganchos executados antes e depois da chamada).
-- [ ] **Invocation Context:** (Passagem de metadados ocultos, como cabeçalhos/tokens).
+- [x] **Invocation Interceptor:** (Ganchos executados antes e depois da chamada).
+- [x] **Invocation Context:** (Passagem de metadados ocultos, como cabeçalhos/tokens).
 - [ ] **Protocol Plug-In:** (Suportar dois protocolos de rede):
     - [x] TCP (`TCPProtocolPlugIn`).
     - [ ] UDP (`UDPProtocolPlugIn` a ser implementado).

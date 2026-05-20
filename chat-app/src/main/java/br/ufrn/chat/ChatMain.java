@@ -1,6 +1,7 @@
 package br.ufrn.chat;
 
 import br.ufrn.chat.storage.Storage;
+import br.ufrn.middleware.extension.LoggerInterceptor;
 import br.ufrn.middleware.identification.AOR;
 import br.ufrn.middleware.identification.Lookup;
 import br.ufrn.middleware.identification.ObjectId;
@@ -28,6 +29,10 @@ public class ChatMain {
         lookup.registerService(Storage.class);
         
         Invoker invoker = new Invoker(lookup, lifecycleManager);
+
+        invoker.addInterceptor(new LoggerInterceptor());
+        System.out.println("[SISTEMA] Interceptador de Log e Desempenho ativado.");
+
         Marshaller marshaller = new Marshaller(invoker);
         
         ServerRequestHandler server = new ServerRequestHandler(new TCPProtocolPlugIn(), marshaller);
