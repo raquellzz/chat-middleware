@@ -1,6 +1,7 @@
 package br.ufrn.chat;
 
 import br.ufrn.chat.storage.Storage;
+import br.ufrn.chat.validator.Validator;
 import br.ufrn.middleware.extension.LoggerInterceptor;
 import br.ufrn.middleware.identification.AOR;
 import br.ufrn.middleware.identification.Lookup;
@@ -27,6 +28,9 @@ public class ChatMain {
         
         lifecycleManager.registerClass(Storage.class);
         lookup.registerService(Storage.class);
+        
+        lifecycleManager.registerClass(Validator.class);
+        lookup.registerService(Validator.class);
         
         Invoker invoker = new Invoker(lookup, lifecycleManager);
 

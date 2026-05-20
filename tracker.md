@@ -16,8 +16,8 @@
 ## 3. Identification Patterns (Nota: 1,0)
 *Como o middleware localiza os objetos.*
 - [x] **Lookup:** Implementado (O mapa em memória que liga Rotas a Métodos).
-- [ ] **Object Id:** (Identificador único para cada serviço registrado).
-- [ ] **Absolute Object Reference (AOR):** (Pacote com IP, Porta e Object Id).
+- [x] **Object Id:** (Identificador único para cada serviço registrado).
+- [x] **Absolute Object Reference (AOR):** (Pacote com IP, Porta e Object Id).
 
 ## 4. Lifecycle Management Patterns (Nota: 2,0)
 *Como o middleware gerencia a memória sob carga.*

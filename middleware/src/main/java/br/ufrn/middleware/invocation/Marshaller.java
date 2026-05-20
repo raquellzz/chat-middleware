@@ -42,7 +42,7 @@ public class Marshaller {
             
             if ("POST".equalsIgnoreCase(httpMethod) && !bodyPart.isEmpty()) {
                 Type type = new TypeToken<Map<String, Object>>(){}.getType();
-                params = gson.fromJson(bodyPart, type);
+                params = gson.fromJson(bodyPart.replace("\0", "").trim(), type);
                 
                 for (Map.Entry<String, Object> entry : params.entrySet()) {
                     if (entry.getValue() instanceof Double aDouble) {
