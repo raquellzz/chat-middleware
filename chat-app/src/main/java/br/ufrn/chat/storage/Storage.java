@@ -12,34 +12,27 @@ import br.ufrn.middleware.enums.ResourceStrategy;
 @Lifecycle(creation = CreationStrategy.PER_REQUEST, resource = ResourceStrategy.POOLING)
 public class Storage {
 
-    // private final ChatDatabase database;
+    private static final ChatDatabase database = new ChatDatabase();
+    private static final GenerationState generationState = new GenerationState(database);
 
-    public Storage() {
-        System.out.println("[STORAGE] Instância alocada no Pool!");
+    @Post(router = "/salvar")
+    public String salvar(@Param(name = "geracao") int geracao, @Param(name = "payload") String payloadJson) {
+        
+        boolean sucesso = generationState.processMessage(geracao, payloadJson);
+        
+        if (sucesso) {
+            return "Mensagem processada com sucesso na geração " + geracao;
+        } else {
+            // O Middleware transforma isso num erro HTTP 500 ou 409
+            throw new RuntimeException("Conflito de Geração. Rejeitado.");
+        }
+    }
+
+    @Post(router = "/listar")
+    public String listar(@Param(name = "sala") String sala) {
+        return database.listarMensagensDaSala(sala);
     }
 
     @Get(router = "/ping")
-    public String ping() {
-        return "PONG";
-    }
-
-    @Post(router = "/salvar")
-    public String salvar(@Param(name = "geracao") int geracaoDaMensagem, @Param(name = "payload") String payloadJson) {
-        
-        System.out.println("[STORAGE] Pedido de salvamento recebido -> Geração: " + geracaoDaMensagem);
-        System.out.println("[STORAGE] Payload: " + payloadJson);
-        
-        // No futuro: boolean sucesso = generationState.processMessage(geracaoDaMensagem, payloadJson);
-        // Se sucesso == false, você fará: throw new RuntimeException("Conflito de Geração");
-        
-        return "Mensagem salva com sucesso";
-    }
-
-    @Get(router = "/listar")
-    public String listar(@Param(name = "sala") String salaSolicitada) {
-        System.out.println("[STORAGE] Buscando histórico da sala: " + salaSolicitada);
-        
-        // No futuro: return database.listarMensagensDaSala(salaSolicitada);
-        return "[ { \"msg\": \"Dados simulados da sala " + salaSolicitada + "\" } ]";
-    }
+    public String ping() { return "PONG"; }
 }

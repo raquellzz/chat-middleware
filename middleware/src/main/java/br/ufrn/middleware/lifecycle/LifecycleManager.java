@@ -23,12 +23,12 @@ public class LifecycleManager {
         CreationStrategy creation = (lifecycle != null) ? lifecycle.creation() : CreationStrategy.STATIC;
         ResourceStrategy resource = (lifecycle != null) ? lifecycle.resource() : ResourceStrategy.LAZY;
 
-        // Se for ESTRATÉGIA STATIC e NÃO for LAZY, cria a instância imediatamente
+        // Se for estratégia static e não for lazy, cria a instância imediatamente
         if (creation == CreationStrategy.STATIC && resource != ResourceStrategy.LAZY) {
             getOrCreateStatic(clazz);
         }
 
-        // Se for ESTRATÉGIA POOLING, pré-popula o pool para evitar lentidão futura
+        // Se for estratégia pooling, pré-popula o pool para evitar lentidão futura
         if (resource == ResourceStrategy.POOLING || resource == ResourceStrategy.POOLING) {
             Queue<Object> pool = objectPools.computeIfAbsent(clazz, k -> new ConcurrentLinkedQueue<>());
             while (pool.size() < POOL_SIZE) {

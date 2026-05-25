@@ -24,7 +24,7 @@
 - **Estratégias de Criação (Escolher 2 de 3):**
     - [x] Static Instance (Instância global única).
     - [x] Per-Request Instance (Nova instância a cada requisição).
-    - [ ] Client-Dependent Instance (Ignorado - já cumprimos a cota).
+    - [ ] Client-Dependent Instance.
 - **Estratégias de Recursos (Escolher 2 de 4):**
     - [x] Lazy Acquisition (Cria a instância apenas no momento do primeiro uso).
     - [x] Pooling (Mantém uma fila de instâncias prontas para economizar CPU).
@@ -35,9 +35,9 @@
 *Mecanismos para adicionar comportamentos extras sem mexer no núcleo.*
 - [x] **Invocation Interceptor:** (Ganchos executados antes e depois da chamada).
 - [x] **Invocation Context:** (Passagem de metadados ocultos, como cabeçalhos/tokens).
-- [ ] **Protocol Plug-In:** (Suportar dois protocolos de rede):
+- [x] **Protocol Plug-In:** (Suportar dois protocolos de rede):
     - [x] TCP (`TCPProtocolPlugIn`).
-    - [ ] UDP (`UDPProtocolPlugIn` a ser implementado).
+    - [x] UDP (`UDPProtocolPlugIn` a ser implementado).
 
 ## 6. Arquitetura e Testes Finais (Tolerância a Falhas)
 *Requisitos práticos para o dia da apresentação.*

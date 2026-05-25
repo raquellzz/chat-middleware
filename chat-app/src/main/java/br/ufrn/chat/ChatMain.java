@@ -10,17 +10,28 @@ import br.ufrn.middleware.invocation.Invoker;
 import br.ufrn.middleware.invocation.Marshaller;
 import br.ufrn.middleware.lifecycle.LifecycleManager;
 import br.ufrn.middleware.remoting.ServerRequestHandler;
+import br.ufrn.middleware.remoting.UDPProtocolPlugIn;
 import br.ufrn.middleware.remoting.TCPProtocolPlugIn;
 
+//NAO ESTA SENDO USADO, MAS DEIXEI COMO EXEMPLO DE NÓ QUE RODA TUDO JUNTO (VALIDATOR + STORAGE) PARA TESTES RÁPIDOS
 public class ChatMain {
     public static void main(String[] args) {
         System.out.println("=== Iniciando Nó de Storage (Componente B) ===");
 
-        ObjectId meuId = new ObjectId("STORAGE_NODE_1");
-        int minhaPorta = 8080;
-        String meuIp = "127.0.0.1";
-        
-        AOR minhaAor = new AOR(meuIp, minhaPorta, "TCP", meuId);
+        if (args.length < 2) {
+            System.out.println("Uso incorreto. Exemplo: java -jar app.jar STORAGE_1 8081 TCP");
+            return;
+        }
+
+        String nomeNo = args[0]; // Ex: STORAGE_1
+        int minhaPorta = Integer.parseInt(args[1]); // Ex: 8081
+        // String protocolo = args[2]; // Ex: TCP ou UDP
+        String protocolo = "TCP"; // Por enquanto, fixamos o protocolo para UDP
+
+        System.out.println("=== Iniciando Nó: " + nomeNo + " na porta " + minhaPorta + " com protocolo " + protocolo + " ===");
+
+        ObjectId meuId = new ObjectId(nomeNo);
+        AOR minhaAor = new AOR("127.0.0.1", minhaPorta, protocolo, meuId);
         System.out.println("[SISTEMA] Minha Identidade na Rede: " + minhaAor.toString());
 
         LifecycleManager lifecycleManager = new LifecycleManager();

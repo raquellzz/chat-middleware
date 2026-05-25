@@ -30,13 +30,12 @@
 
         public String listarMensagensDaSala(String sala) {
             List<ChatMessage> mensagens = salasDeChat.getOrDefault(sala, new CopyOnWriteArrayList<>());
-            if (!mensagens.isEmpty()) {
-                String jsonCompleto = gson.toJson(mensagens);
-                int tamanhoRealBytes = jsonCompleto.getBytes().length;
-                
-                System.out.println("[BANCO] Status da Sala [" + sala + "]: " 
-                        + mensagens.size() + " mensagens armazenadas. " 
-                        + "Peso total: " + tamanhoRealBytes + " bytes.");
+        
+            System.out.println("\n[BANCO DE DADOS] Consulta recebida para a sala: [" + sala + "]");
+            System.out.println("[BANCO DE DADOS] Total de mensagens retornadas: " + mensagens.size());
+            
+            if (mensagens.isEmpty()) {
+                return "[]"; 
             }
 
             int limite = 50; 
@@ -49,5 +48,6 @@
             }
             
             return gson.toJson(ultimasMensagens);
+    
         }
     }
