@@ -1,5 +1,6 @@
     package br.ufrn.chat.storage;
 
+    import java.util.ArrayList;
     import java.util.List;
     import java.util.Map;
     import java.util.concurrent.ConcurrentHashMap;
@@ -29,25 +30,33 @@
         }
 
         public String listarMensagensDaSala(String sala) {
-            List<ChatMessage> mensagens = salasDeChat.getOrDefault(sala, new CopyOnWriteArrayList<>());
-        
-            System.out.println("\n[BANCO DE DADOS] Consulta recebida para a sala: [" + sala + "]");
-            System.out.println("[BANCO DE DADOS] Total de mensagens retornadas: " + mensagens.size());
-            
-            if (mensagens.isEmpty()) {
-                return "[]"; 
-            }
-
-            int limite = 50; 
-            List<ChatMessage> ultimasMensagens;
-            
-            if (mensagens.size() > limite) {
-                ultimasMensagens = mensagens.subList(mensagens.size() - limite, mensagens.size());
-            } else {
-                ultimasMensagens = mensagens;
-            }
-            
-            return gson.toJson(ultimasMensagens);
-    
+        if (sala == null || sala.trim().isEmpty()) {
+            System.err.println("[BANCO DE DADOS] Erro: Sala consultada é nula.");
+            return "[]"; 
         }
+        
+        List<ChatMessage> mensagensOriginais = salasDeChat.getOrDefault(sala, new CopyOnWriteArrayList<>());
+    
+        System.out.println("[BANCO DE DADOS] Consulta recebida para a sala: [" + sala + "]");
+        System.out.println("[BANCO DE DADOS] Total de mensagens retornadas: " + mensagensOriginais.size());
+            
+        
+        if (mensagensOriginais.isEmpty()) {
+            return "[]";
+        }
+        
+        List<ChatMessage> snapshotSeguro = new ArrayList<>(mensagensOriginais);
+        
+        int limite = 50; 
+        List<ChatMessage> ultimasMensagens;
+        
+        if (snapshotSeguro.size() > limite) {
+            ultimasMensagens = snapshotSeguro.subList(snapshotSeguro.size() - limite, snapshotSeguro.size());
+        } else {
+            ultimasMensagens = snapshotSeguro;
+        }
+        
+        System.out.println("[BANCO DE DADOS] Total de mensagens retornadas: " + ultimasMensagens.size());
+        return gson.toJson(ultimasMensagens);
+    }
     }

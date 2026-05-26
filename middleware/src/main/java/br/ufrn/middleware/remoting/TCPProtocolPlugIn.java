@@ -8,6 +8,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class TCPProtocolPlugIn implements ProtocolPlugIn {
+    // private final ExecutorService virtualPool = Executors.newVirtualThreadPerTaskExecutor();
 
     @Override
     public void startListen(int port, MessageProcessor processor) {
@@ -19,6 +20,7 @@ public class TCPProtocolPlugIn implements ProtocolPlugIn {
                 
                 // Dispara uma Thread para cada requisição para não travar o servidor
                 new Thread(() -> handleConnection(clientSocket, processor)).start();
+                // virtualPool.submit(() -> handleConnection(clientSocket, processor));
             }
         } catch (IOException e) {
             System.err.println("[TCP PLUGIN] Erro fatal no servidor: " + e.getMessage());

@@ -8,8 +8,11 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import br.ufrn.middleware.exceptions.RemotingException;
+import br.ufrn.middleware.remoting.MessageProcessor;
+import br.ufrn.middleware.utils.HttpHelper;
+import br.ufrn.middleware.utils.HttpHelper.HttpRequestData;
 
-public class Marshaller {
+public class Marshaller implements MessageProcessor {
 
     private final Invoker invoker;
     private final Gson gson;
@@ -20,38 +23,38 @@ public class Marshaller {
     }
 
     /**
-     * Pega na requisição HTTP bruta da rede e traduz para o Invoker
+     * Pega a requisição bruta, delega o parse HTTP para o Helper,
+     * converte o payload JSON (Unmarshal) e traduz para o Invoker
      */
-    public String unmarshalAndInvoke(String rawHttpRequest) {
+    @Override
+    public String processMessage(String rawHttpRequest) {
         try {
-            String[] parts = rawHttpRequest.split("\r\n\r\n", 2);
-            String headerPart = parts[0];
-            String bodyPart = parts.length > 1 ? parts[1] : "";
+            if (rawHttpRequest == null || rawHttpRequest.trim().isEmpty()) return "";
 
-            String[] headerLines = headerPart.split("\r\n");
-            String[] requestLine = headerLines[0].split(" ");
-            
-            if (requestLine.length < 2) {
-                throw new RemotingException(400, "Requisicao HTTP malformada");
+            HttpRequestData req = HttpHelper.parse(rawHttpRequest);
+
+            if (!req.isValid) {
+                throw new RemotingException(400, "Requisicao malformada ou nao suportada");
             }
 
-            String httpMethod = requestLine[0];
-            String route = requestLine[1];
-
             Map<String, Object> params = new HashMap<>();
+            String routeToInvoke = req.route;
             
-            if ("POST".equalsIgnoreCase(httpMethod) && !bodyPart.isEmpty()) {
+            // Deserialização (Unmarshal): Transforma o JSON ou Query Params em Objetos Java
+            if ("POST".equalsIgnoreCase(req.method) && !req.body.isEmpty()) {
                 Type type = new TypeToken<Map<String, Object>>(){}.getType();
-                params = gson.fromJson(bodyPart.replace("\0", "").trim(), type);
+                params = gson.fromJson(req.body, type);
                 
-                for (Map.Entry<String, Object> entry : params.entrySet()) {
-                    if (entry.getValue() instanceof Double aDouble) {
-                        entry.setValue(aDouble.intValue());
+                if (params != null) {
+                    for (Map.Entry<String, Object> entry : params.entrySet()) {
+                        if (entry.getValue() instanceof Double aDouble) {
+                            entry.setValue(aDouble.intValue());
+                        }
                     }
                 }
-            } else if ("GET".equalsIgnoreCase(httpMethod) && route.contains("?")) {
-                String[] routeParts = route.split("\\?");
-                route = routeParts[0];
+            } else if ("GET".equalsIgnoreCase(req.method) && routeToInvoke.contains("?")) {
+                String[] routeParts = routeToInvoke.split("\\?");
+                routeToInvoke = routeParts[0];
                 String[] queryParams = routeParts[1].split("&");
                 for (String param : queryParams) {
                     String[] kv = param.split("=");
@@ -61,34 +64,35 @@ public class Marshaller {
                 }
             }
 
-            Object result = invoker.invoke(httpMethod, route, params);
+            // Invoca a Regra de Negócio (Storage ou Validator)
+            Object result = invoker.invoke(req.method, routeToInvoke, params);
 
+            // Formata a resposta (Marshal)
             return marshalResult(result);
 
         } catch (RemotingException e) {
-            // Pega o código (404, 400, 500) e manda a resposta amigável formatada!
             System.err.println("[REMOTING ERROR] " + e.getHttpStatusCode() + " - " + e.getMessage());
-            return buildHttpResponse(e.getHttpStatusCode(), "{\"erro\": \"" + e.getMessage() + "\"}");
+            return HttpHelper.buildResponse(e.getHttpStatusCode(), "{\"erro\": \"" + e.getMessage() + "\"}");
             
         } catch (Exception e) {
+            System.err.println("[MARSHALLER FATAL ERROR] " + e.getMessage());
             e.printStackTrace();
-            return buildHttpResponse(500, "{\"erro\": \"Internal Server Error\"}");
+            return HttpHelper.buildResponse(500, "{\"erro\": \"Internal Server Error\"}");
         }
     }
 
     /**
-     * Formata qualquer objeto Java de volta para uma string HTTP válida
+     * Formata o objeto retornado pelo Invoker para JSON e delega o empacotamento HTTP
      */
     private String marshalResult(Object result) {
-        String jsonResponse = gson.toJson(result);
-        return buildHttpResponse(200, jsonResponse);
-    }
-
-    private String buildHttpResponse(int statusCode, String body) {
-        String statusText = statusCode == 200 ? "OK" : (statusCode == 404 ? "Not Found" : "Error");
-        return "HTTP/1.1 " + statusCode + " " + statusText + "\r\n" +
-               "Content-Type: application/json\r\n" +
-               "Content-Length: " + body.getBytes().length + "\r\n" +
-               "\r\n" + body;
+        String jsonResponse;
+        
+        if (result instanceof String && (((String) result).startsWith("{") || ((String) result).startsWith("["))) {
+            jsonResponse = (String) result;
+        } else {
+            jsonResponse = gson.toJson(result);
+        }
+        
+        return HttpHelper.buildResponse(200, jsonResponse);
     }
 }

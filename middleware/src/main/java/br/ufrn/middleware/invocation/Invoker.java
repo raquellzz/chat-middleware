@@ -75,6 +75,7 @@ public class Invoker {
             return result;
             
         } catch (InvocationTargetException e) {
+            e.getCause().printStackTrace();
             throw new RemotingException(500, "Erro na aplicacao: " + e.getTargetException().getMessage());
         } catch (Exception e) {
             throw new RemotingException(500, "Erro de ciclo de vida: " + e.getMessage());

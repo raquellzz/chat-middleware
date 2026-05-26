@@ -1,23 +1,16 @@
 package br.ufrn.middleware.remoting;
 
-import br.ufrn.middleware.invocation.Marshaller;
-
-public class ServerRequestHandler implements MessageProcessor {
+public class ServerRequestHandler {
 
     private final ProtocolPlugIn protocol;
-    private final Marshaller marshaller;
+    private final MessageProcessor processor;
 
-    public ServerRequestHandler(ProtocolPlugIn protocol, Marshaller marshaller) {
+    public ServerRequestHandler(ProtocolPlugIn protocol, MessageProcessor processor) {
         this.protocol = protocol;
-        this.marshaller = marshaller;
+        this.processor = processor;
     }
 
     public void start(int port) {
-        protocol.startListen(port, this);
-    }
-
-    @Override
-    public String processMessage(String rawRequest) {
-        return marshaller.unmarshalAndInvoke(rawRequest);
+        protocol.startListen(port, processor);
     }
 }

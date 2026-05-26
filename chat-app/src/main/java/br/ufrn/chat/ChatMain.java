@@ -10,7 +10,6 @@ import br.ufrn.middleware.invocation.Invoker;
 import br.ufrn.middleware.invocation.Marshaller;
 import br.ufrn.middleware.lifecycle.LifecycleManager;
 import br.ufrn.middleware.remoting.ServerRequestHandler;
-import br.ufrn.middleware.remoting.UDPProtocolPlugIn;
 import br.ufrn.middleware.remoting.TCPProtocolPlugIn;
 
 //NAO ESTA SENDO USADO, MAS DEIXEI COMO EXEMPLO DE NÓ QUE RODA TUDO JUNTO (VALIDATOR + STORAGE) PARA TESTES RÁPIDOS

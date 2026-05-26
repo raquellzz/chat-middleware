@@ -23,12 +23,11 @@ public class Storage {
         if (sucesso) {
             return "Mensagem processada com sucesso na geração " + geracao;
         } else {
-            // O Middleware transforma isso num erro HTTP 500 ou 409
             throw new RuntimeException("Conflito de Geração. Rejeitado.");
         }
     }
 
-    @Post(router = "/listar")
+    @Get(router = "/listar")
     public String listar(@Param(name = "sala") String sala) {
         return database.listarMensagensDaSala(sala);
     }

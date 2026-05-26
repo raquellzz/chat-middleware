@@ -2,7 +2,7 @@ package br.ufrn.chat.validator;
 
 import com.google.gson.Gson;
 
-import br.ufrn.chat.domain.ChatMessage; // A classe de erro que criamos
+import br.ufrn.chat.domain.ChatMessage;
 import br.ufrn.middleware.annotations.Get;
 import br.ufrn.middleware.annotations.Lifecycle;
 import br.ufrn.middleware.annotations.Param;

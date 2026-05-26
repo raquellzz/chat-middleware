@@ -7,11 +7,11 @@
 
 ## 2. Basic Remoting Patterns (Nota: 2,0)
 *A infraestrutura básica de rede e invocação.*
-- [x] **Server Request Handler:** Implementado (A classe que amarra o TCP ao Marshaller).
-- [x] **Invoker:** Implementado (O cérebro que executa o método via Reflection).
-- [x] **Marshaller:** Implementado (Faz o parse do JSON/HTTP usando Gson).
-- [x] **Remote Object:** Implementado (O seu `Storage` e `Validator` limpos de código de rede).
-- [x] **Remoting Error:** Implementado (A `RemotingException` que gera os HTTP 404, 400, 500).
+- [x] **Server Request Handler:**
+- [x] **Invoker:**
+- [x] **Marshaller:**
+- [x] **Remote Object:**
+- [x] **Remoting Error:**
 
 ## 3. Identification Patterns (Nota: 1,0)
 *Como o middleware localiza os objetos.*
@@ -37,7 +37,7 @@
 - [x] **Invocation Context:** (Passagem de metadados ocultos, como cabeçalhos/tokens).
 - [x] **Protocol Plug-In:** (Suportar dois protocolos de rede):
     - [x] TCP (`TCPProtocolPlugIn`).
-    - [x] UDP (`UDPProtocolPlugIn` a ser implementado).
+    - [x] UDP (`UDPProtocolPlugIn`).
 
 ## 6. Arquitetura e Testes Finais (Tolerância a Falhas)
 *Requisitos práticos para o dia da apresentação.*
